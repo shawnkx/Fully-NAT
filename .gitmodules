@@ -1,0 +1,3 @@
+[submodule "ctcdecode"]
+	path = ctcdecode
+	url = git@github.com:MultiPath/ctcdecode.git
