@@ -515,10 +515,6 @@ class Trainer(object):
                 and not self.tpu
             ):
                 self._check_grad_norms(grad_norm)
-            grad = []
-            for name, param in self._model.named_parameters():
-                grad.append([name, param.grad.data])
-            torch.save(grad, '/usr1/xiangk/grad_before.pt')
             with torch.autograd.profiler.record_function("optimizer"):
                 # take an optimization step
                 self.optimizer.step()

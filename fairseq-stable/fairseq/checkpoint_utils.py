@@ -198,41 +198,18 @@ def load_model_ensemble_and_task(filenames, arg_overrides=None, task=None, stric
     from fairseq import tasks
 
     ensemble = []
-    # idx = 0
     for filename in filenames:
         filename = filename.replace(".pt", suffix + ".pt")
         if not PathManager.exists(filename):
             raise IOError("Model file not found: {}".format(filename))
         state = load_checkpoint_to_cpu(filename, arg_overrides)
-        # if idx == 1:
-        #     tgt_dict = Dictionary.load('/usr1/xiangk/NMT-data/wmt20_jaen_filter_bin/dict.en.txt')
-        #     task_dict = task.target_dictionary
-        #     map_index = []
-        #     for symbol in task_dict.symbols:
-        #         map_index.append(tgt_dict.index(symbol))
-        #     map_index = torch.tensor(map_index)
-        #     import copy
-        #     revised_state = copy.deepcopy(state['model'])
-        #     revised_state['encoder.embed_tokens.weight'] = \
-        #     revised_state['encoder.embed_tokens.weight'][map_index]
-        #     revised_state['decoder.embed_tokens.weight'] = \
-        #     revised_state['decoder.embed_tokens.weight'][map_index]
-        #     revised_state['decoder.output_projection.weight'] = \
-        #     revised_state['decoder.output_projection.weight'][map_index]
-        #     state["model"] = revised_state
-        #     with open('/usr1/xiangk/NMT-data/wmt20-jaen-at-big-jgu/revised_jaen_best.pt', "wb") as f:
-        #         print('save')
-        #         torch_persistent_save(state, f)
-
         args = state["args"]
         if task is None:
             task = tasks.setup_task(args)
-
         # build model for ensemble
         model = task.build_model(args)
         model.load_state_dict(state["model"], strict=strict, args=args)
         ensemble.append(model)
-        # idx += 1
     return ensemble, args, task
 
 
